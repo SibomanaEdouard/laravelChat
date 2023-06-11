@@ -10,7 +10,7 @@
     <!-- Styles -->
 </head>
 <body class="antialiased">
-    <form action="{{ url('/users') }}" method="post">
+    <form action="{{ url('/users') }}" method="post" enctype="multipart/form-data">
         @csrf
         <label for="firstname">FirstName</label><br>
         <input type="text" name="firstname" id="firstname" required><br>
@@ -22,6 +22,9 @@
         <input type="tel" name="phone" id="phone" required><br>
         <label for="password">Password</label><br>
         <input type="password" name="password" id="password" required><br>
+        <label for="photo">Add photo</label><br>
+        <input type="file" name="image" id="image" required><br>
+
         <button type="submit">Submit</button>
     </form>
     <h1>Do you have an account? 

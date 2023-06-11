@@ -1,46 +1,106 @@
 <?php
 
+// namespace App\Http\Controllers;
+// use App\Models\User;
+// use Illuminate\Http\Request;
+// use Illuminate\Support\Facades\Auth;
+// class UserSignUpController extends Controller
+// {
+  
+//     public function create()
+//     {
+        
+//     }
+
+//  //this is to store the users and their items
+//     public function store(Request $request)
+//     {
+      
+//         $validateData=$request->validate([
+//             "firstname"=>"required",
+//             "lastname"=>"required",
+//             "email"=>"required|email",
+//             "password"=>"required",
+//             "phone"=>"required",
+//             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+
+//         ]
+//         );
+//         if($request->hasFile('image')){
+//          $image=$request->file('image');
+//          $imagePath=$image->store('images','public'); 
+//          $imageUrl=asset('storage/'.$imagePath); 
+
+      
+//         $user=new User();
+//         $user->firstname=$validateData['firstname'];
+//         $user->lastname=$validateData['lastname'];
+//         $user->email=$validateData['email'];
+//         $user->password=$validateData['password'];
+//         $user->phone=$validateData['phone'];
+//         $user->image_url=$imageUrl ?? null;
+//      $savedNewUser=$user->save();
+//      if($savedNewUser){
+//         return redirect('/login')->with("The account was created successfully");
+//      }
+//      else{
+//         return redirect()->back()->with("Some thing went wrong please check email and phone and try again");
+//      }
+    
+//     }
+//     }
+
+
+
 namespace App\Http\Controllers;
+
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
 class UserSignUpController extends Controller
 {
-  
     public function create()
     {
-        
+        // Code for the create method goes here
     }
 
- //this is to store the users and their items
+    // This method is used to store the users and their items
     public function store(Request $request)
     {
-      
-        $validateData=$request->validate([
-            "firstname"=>"required",
-            "lastname"=>"required",
-            "email"=>"required|email",
-            "password"=>"required",
-            "phone"=>"required",
+        $validateData = $request->validate([
+            "firstname" => "required",
+            "lastname" => "required",
+            "email" => "required|email",
+            "password" => "required",
+            "phone" => "required",
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
 
-        ]
-        );
-        $user=new User();
-        $user->firstname=$validateData['firstname'];
-        $user->lastname=$validateData['lastname'];
-        $user->email=$validateData['email'];
-        $user->password=$validateData['password'];
-        $user->phone=$validateData['phone'];
-     $savedNewUser=$user->save();
-     if($savedNewUser){
-        return redirect('/login')->with("The account was created successfully");
-     }
-     else{
-        return redirect()->back()->with("Some thing went wrong please check email and phone and try again");
-     }
-    
-      
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imagePath = $image->store('images', 'public');
+            $imageUrl = asset('storage/' . $imagePath);
+        }
+
+        $user = new User();
+        $user->firstname = $validateData['firstname'];
+        $user->lastname = $validateData['lastname'];
+        $user->email = $validateData['email'];
+        $user->password = $validateData['password'];
+        $user->phone = $validateData['phone'];
+        $user->image_url = $imageUrl ?? null;
+
+        $savedNewUser = $user->save();
+        if ($savedNewUser) {
+            return redirect('/login')->with("success", "The account was created successfully");
+        } else {
+            return redirect()->back()->with("error", "Something went wrong. Please check the email and phone and try again");
+        }
     }
+
+
+
 
     //this is to make authantication and authorization
     public function loginUser(Request $request){
@@ -48,24 +108,26 @@ class UserSignUpController extends Controller
            "email"=>"required|email",
            "password"=>"required"
         ]);
-        
+
         //let me check if in the database there is any person with credentials
    $credentials=$request->only('email' , 'password');   
         if(Auth::attempt($credentials)){
-          return "The user is allowed to continue";
+          return redirect('/information');
         }
    else{
        return  redirect()->back()->with("error","Invalid email or password");
    }
        }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+  //this to retrieve all data from  
+    public function show()
     {
-        // Show the details of a specific user
-        // You can add your logic here to fetch and display the user details
+if (Auth::check()) {
+    $user = Auth::user();
+    return $user->lastname . "<br/>" . $user->firstname . "<br/>" . '<img src="' . $user->image_url . '" alt="profile" />';
+} else {
+    return "User not logged in";
+}
     }
 
     /**

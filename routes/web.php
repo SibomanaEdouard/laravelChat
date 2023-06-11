@@ -14,8 +14,8 @@ Route::get("/login",function(){
 
 Route::post('/users', [UserSignUpController::class, 'store']);
 Route::post('/login',[UserSIgnUpController::class,'loginUser']);
-// Route::post('/login','UserSIgnUpController')->name('loginUser');
 
+Route::get('/information',[UserSIgnUpController::class,'show']);
 
 
 ?>
