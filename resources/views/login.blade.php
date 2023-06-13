@@ -20,11 +20,17 @@
        
         <label for="password">Password</label><br>
         <input type="password" name="password" id="password" required><br>
-        <button type="submit">Submit</button>
+        <button type="submit">Login</button>
     </form>
     <h1>Do you have an account? 
-        <button>sign up</button>
-       
-    </h1>
+        <button id="signButton" type="submit">sign up</button>
+       </h1>
+       <script>
+        document.getElementById("signButton").addEventListener('click',function(event){
+            event.preventDefault();
+            window.location.href='/signup';
+        })
+        
+       </script>
 </body>
 </html>

@@ -93,7 +93,7 @@ class UserSignUpController extends Controller
 
         $savedNewUser = $user->save();
         if ($savedNewUser) {
-            return redirect('/login')->with("success", "The account was created successfully");
+            return redirect('/')->with("success", "The account was created successfully");
         } else {
             return redirect()->back()->with("error", "Something went wrong. Please check the email and phone and try again");
         }
@@ -124,36 +124,69 @@ class UserSignUpController extends Controller
     {
 if (Auth::check()) {
     $user = Auth::user();
-    return $user->lastname . "<br/>" . $user->firstname . "<br/>" . '<img src="' . $user->image_url . '" alt="profile" />';
+    return view('information',compact('user'));
 } else {
     return "User not logged in";
 }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        // Show the form view for editing a specific user
-        // You can return a view here to display the edit form
+    public function updateForm()
+{
+    if (Auth::check()) {
+        $user = Auth::user();
+        return view('update', compact('user'));
+    } else {
+        return "User not logged in";
     }
+}
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+
+  
+    public function update(Request $request)
     {
-        // Update the user data in the database
-        // You can add your logic here to update the data or perform any other actions
+        $validateData = $request->validate([
+            "firstname" => "required",
+            "lastname" => "required",
+            "email" => "required|email",
+            "password" => "required",
+            "phone" => "required",
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $imagePath = $image->store('images', 'public');
+            $imageUrl = asset('storage/' . $imagePath);
+        }
+
+        $user = Auth::user();
+        $user->firstname = $validateData['firstname'];
+        $user->lastname = $validateData['lastname'];
+        $user->email = $validateData['email'];
+        $user->password = $validateData['password'];
+        $user->phone = $validateData['phone'];
+        $user->image_url = $imageUrl ?? null;
+
+        $savedNewUser = $user->save();
+        if ($savedNewUser) {
+            return redirect('/information')->with("success", "The account was updated successfully");
+        } else {
+            return redirect()->back()->with("error", "Something went wrong. Please check the email and phone and try again");
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy()
     {
-        // Delete a specific user from the database
-        // You can add your logic here to delete the user or perform any other actions
+        if(Auth::check()){
+$user=Auth::user();
+$user->delete();
+return response()->json(['success' => true]);
+// return redirect('/signup')->with('Message','You have been deleted from the system successfully');
+
+        }
+       
     }
 }
