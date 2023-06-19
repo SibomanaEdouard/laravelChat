@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\UserSIgnUpController;
+use App\Http\Controllers\UserSignUpController;
 use Illuminate\Support\Facades\Route;
 
 
